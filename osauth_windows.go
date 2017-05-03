@@ -14,6 +14,8 @@ var (
 const (
 	logon32LogonNetwork    = 3
 	logon32ProviderDefault = 0
+
+	errorLogonFailure = 1326
 )
 
 func authUser(username string, password string) error {
@@ -27,6 +29,9 @@ func authUser(username string, password string) error {
 		uintptr(unsafe.Pointer(&token)))
 
 	if int(r1) == 0 {
+		if errno, ok := err.(syscall.Errno); ok && int(errno) == errorLogonFailure {
+			return WrongPassError
+		}
 		return err
 	}
 
