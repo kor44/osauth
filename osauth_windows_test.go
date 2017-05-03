@@ -1,5 +1,11 @@
 package osauth
 
+import (
+	"bytes"
+	"os/exec"
+	"testing"
+)
+
 func addUser(userName string, userPassword string, t *testing.T) {
 	// set active console code page to United States
 	exec.Command("chcp", "437").Run()
