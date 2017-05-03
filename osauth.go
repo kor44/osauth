@@ -5,7 +5,10 @@ import (
 	"os/user"
 )
 
-var UnknownUserError = errors.New("Authentication failed: no such user")
+var (
+	UnknownUserError = errors.New("Authentication failed: no such user")
+	WrongPassError   = errors.New("Authentication failed: password incorrect")
+)
 
 // Check authentication. If user name not found return UnknownUserError
 func AuthUser(username string, passsword string) error {
