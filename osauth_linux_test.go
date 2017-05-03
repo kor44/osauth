@@ -2,18 +2,31 @@ package osauth
 
 import (
 	"bytes"
+	"fmt"
 	"os/exec"
 	"testing"
 )
 
 func addUser(userName string, userPassword string, t *testing.T) {
 	// create user
-	cmd := exec.Command("useradd", userName, "--password", userPassword)
+	useradd := exec.Command("useradd", userName)
 	var stderr bytes.Buffer
-	cmd.Stderr = &stderr
-	if err := cmd.Run(); err != nil {
+	useradd.Stderr = &stderr
+	if err := useradd.Run(); err != nil {
 		t.Skipf("Unable to create test user \"%s\":\n%s", userName, stderr.String())
 	}
+
+	if userPassword == "" {
+		return
+	}
+
+	// set password
+	chpasswd := exec.Command("bash", "-c", fmt.Sprintf(`echo "%s:%s" | chpasswd`, userName, userPassword))
+	chpasswd.Stderr = &stderr
+	if err := chpasswd.Run(); err != nil {
+		t.Skipf("Unable to set test user password \"%s\":\n%s", userName, stderr.String())
+	}
+
 }
 
 func deleteUser(userName string) {

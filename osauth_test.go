@@ -5,7 +5,7 @@ import (
 )
 
 func TestAuth(t *testing.T) {
-	var userName = "osauth_testuser"
+	var userName = "osauth_user"
 	var userPassword = "osauth_pass"
 
 	addUser(userName, userPassword, t)
@@ -16,8 +16,9 @@ func TestAuth(t *testing.T) {
 		pass     string
 		result   func(error) bool
 	}{
-		"Auth Successful": {userName, userPassword, func(err error) bool { return err == nil }},
-		"Auth failed":     {userName, "wrong_password", func(err error) bool { return err != nil && err != UnknownUserError }},
+		"Auth Successful":           {userName, userPassword, func(err error) bool { return err == nil }},
+		"Auth failed":               {userName, "wrong_password", func(err error) bool { return err == WrongPassError }},
+		"Auth failed (no password)": {userName, "", func(err error) bool { return err == WrongPassError }},
 	}
 
 	for k, tc := range cases {
